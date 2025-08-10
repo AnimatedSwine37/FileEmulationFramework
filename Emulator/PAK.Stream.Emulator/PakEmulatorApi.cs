@@ -65,8 +65,9 @@ public class PakEmulatorApi : IPakEmulator
     {
         // Map input to API.
         var input = _pakEmulator.GetInput();
-        var result = GC.AllocateUninitializedArray<RouteGroupTuple>(input.Count);
-        for (int x = 0; x < result.Length; x++)
+        var fileInput = _pakEmulator.GetFileInput();
+        var result = GC.AllocateUninitializedArray<RouteGroupTuple>(input.Count + fileInput.Count);
+        for (int x = 0; x < input.Count; x++)
         {
             var original = input[x];
             result[x] = new RouteGroupTuple()
@@ -79,6 +80,25 @@ public class PakEmulatorApi : IPakEmulator
                     {
                         FullPath = original.Files.Directory.FullPath,
                         LastWriteTime = original.Files.Directory.LastWriteTime
+                    }
+                }
+            };
+        }
+
+        for (int x = 0; x < fileInput.Count; x++)
+        {
+            var original = fileInput[x];
+            var directory = Path.GetDirectoryName(original.FilePath);
+            result[x + input.Count] = new RouteGroupTuple()
+            {
+                Route = original.Route.FullPath,
+                Files = new DirectoryFilesGroup()
+                {
+                    Files = [Path.GetFileName(original.VirtualPath)],
+                    Directory = new DirectoryInformation()
+                    {
+                        FullPath = directory,
+                        LastWriteTime = Directory.GetLastWriteTime(directory),
                     }
                 }
             };

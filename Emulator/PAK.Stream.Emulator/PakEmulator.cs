@@ -125,5 +125,7 @@ public class PakEmulator : IEmulator
 
     internal List<RouteGroupTuple> GetInput() => _builderFactory.RouteGroupTuples;
 
+    internal List<RouteFileTuple> GetFileInput() => _builderFactory.RouteFileTuples.ToList();
+
     internal void AddFromFolders(string dir) => _builderFactory.AddFromFolders(dir);
 }
